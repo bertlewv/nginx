@@ -1,0 +1,42 @@
+map $remote_addr $log_ip {
+
+        "127.0.0.1" 0;
+        "10.0.0.0/8" 0;
+
+        default 1;
+}
+include cache_params;
+server {
+        listen 80;
+        listen [::]:80;
+	expires $expires;
+        root /home/greg/html;
+        index index.php index.html index.htm;
+
+        server_name gregharrisonband.com www.gregharrisonband.com;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+
+        error_page 404 /404.html;
+        access_log /home/greg/access.log;
+	error_log /home/greg/error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-greg.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
+server {
+        listen 443 ssl;
+        server_name gregharrisonband.com www.gregharrisonband.com;
+        return 302 http://$server_name$request_uri;
+}

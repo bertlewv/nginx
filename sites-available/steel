@@ -1,0 +1,32 @@
+include cache_params;
+server {
+	server_name steeltowncowboy.com www.steeltowncowboy.com;
+        listen 80;
+        listen [::]:80;
+	expires $expires;
+	#root /home/cmm/html/parked;
+        root /home/steeltown/html;
+        index index.php index.html index.htm;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+
+        error_page 404 /404.html;
+        access_log /home/steeltown/access.log;
+        error_log /home/steeltown/error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-steeltown.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
+

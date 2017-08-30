@@ -1,0 +1,42 @@
+map $remote_addr $log_ip {
+
+        "127.0.0.1" 0;
+        "10.0.0.0/8" 0;
+        "129.71.2.132" 0;
+
+        default 1;
+}
+include cache_params;
+server {
+        listen 80;
+	listen [::]:80;
+	expires $expires;
+        root /home/cmm/html/parked;
+        index index.php index.html index.htm;
+
+        server_name tnu304.com www.tnu304.com;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+        location /stuff {
+                autoindex on;
+        }
+
+        error_page 404 /404.html;
+	access_log /home/mike/sites/parked_access.log combined if=$log_ip;
+	error_log /home/mike/sites/parked_error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-mike.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
+

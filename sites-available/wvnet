@@ -1,0 +1,107 @@
+map $remote_addr $log_ip {
+
+        "127.0.0.1" 0;
+        "10.0.0.0/8" 0;
+        "129.71.2.132" 0;
+
+        default 1;
+}
+include cache_params;
+#HTTP
+server {
+	listen 80;
+	listen [::]:80;
+	server_name wvnet.work www.wvnet.work;
+	return 302 https://$host$request_uri;
+}
+server {
+        listen 443 ssl;
+	listen [::]:443 ssl;
+	expires $expires;
+	
+	#Certificate settings
+	include ssl_params;
+	ssl_certificate /etc/letsencrypt/live/wvnet.work/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/wvnet.work/privkey.pem;
+
+        root /home/mike/sites/wvnet;
+        index index.php index.html index.htm;
+
+        server_name wvnet.work www.wvnet.work;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+		#auth_basic "Mike's Friends Only";
+                #auth_basic_user_file /home/mike/sites/wvnet/htpasswd.users;
+        }
+	location /wp/ {
+		try_files $uri $uri/ /wp/index.php?q=$uri&$args;
+	}
+	location /stuff {
+		autoindex on;
+	}
+	location /camera {
+		autoindex on;
+	}
+	location /nocmonitor2 {
+		autoindex on;
+	}
+        error_page 404 /404.html;
+	access_log /home/mike/sites/wvnet/access.log filtered if=$log_ip;
+	error_log /home/mike/sites/wvnet/error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+        location ~ \.php$ {
+		fastcgi_read_timeout 120;
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-mike.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+        if (!-e $request_filename) {
+		rewrite ([^/]+)$ /index.php?id=$1 last;
+                #rewrite ^/([^/]*)$ /index.php?site=$1 last;
+        }
+        location ~* \.(sqlite3|ht)$ {
+                deny all;
+        }
+
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+	expires $expires;
+	root /home/mike/sites/wvnet/tools;
+	index index.php index.html;
+	
+	server_name tools.wvnet.work www.tools.wvnet.work;
+
+        location / {
+                # try_files $uri $uri/ =404;
+		autoindex on;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+
+        error_page 404 /404.html;
+        access_log /home/mike/sites/wvnet/access.log combined if=$log_ip;
+        error_log /home/mike/sites/wvnet/error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+        location ~ \.php$ {
+                fastcgi_read_timeout 120;
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-mike.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+		fastcgi_buffering off;
+        }
+}
+

@@ -1,0 +1,41 @@
+include cache_params;
+#HTTP
+server {
+        listen 80;
+        listen [::]:80;
+        server_name masonridgeentertainment.com www.masonridgeentertainment.com;
+        return 301 https://$host$request_uri;
+}
+#HTTPS
+server {
+        server_name masonridgeentertainment.com www.masonridgeentertainment.com;
+        listen [::]:443 ssl;
+        listen 443 ssl;
+	expires $expires;
+        ssl_certificate /etc/letsencrypt/live/masonridgeentertainment.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/masonridgeentertainment.com/privkey.pem;
+        include ssl_params;
+	#root /home/cmm/html/parked;
+	root /home/masonridge/html;
+        index index.php index.html index.htm;
+
+        location / {
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+
+        error_page 404 /404.html;
+	access_log /home/masonridge/access.log;
+	error_log /home/masonridge/error.log;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /var/www/html;
+        }
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-masonridge.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
+
