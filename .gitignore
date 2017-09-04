@@ -1,0 +1,15 @@
+.htpasswd
+conf.d/
+fastcgi.conf
+fastcgi_params
+koi-utf
+koi-win
+mime.types
+scgi_params
+sites-enabled/
+snippets/
+ssl/
+uwsgi_params
+win-utf
+
+
