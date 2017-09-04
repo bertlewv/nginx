@@ -19,20 +19,20 @@ server {
         index index.php index.html index.htm;
 
         location / {
-		autoindex on;
+                autoindex on;
                 try_files $uri $uri/ /index.php?q=$uri&$args;
         }
 
         error_page 404 /404.html;
         access_log /home/cmm/access.log;
-	error_log /home/cmm/error.log;
+        error_log /home/cmm/error.log;
         error_page 500 502 503 504 /50x.html;
         location = /50x.html {
                 root /var/www/html;
         }
-	location = /404.html {
-		root /var/www/html;
-	}
+	      location = /404.html {
+          root /var/www/html;
+	      }
         location ~ \.php$ {
                 try_files $uri =404;
                 fastcgi_split_path_info ^(.+\.php)(/.+)$;
