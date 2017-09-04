@@ -68,7 +68,6 @@ server {
         }
 
 }
-
 server {
 	server_name unifi.rtswv.com;
 	listen 80;
@@ -78,5 +77,25 @@ server {
 		proxy_set_header Host $host;
 		proxy_pass http://138.197.149.162:8080;
 	}
+}
+server {
+        listen 80;
+        listen [::]:80;
+        expires $expires;
+        root /home/mike/sites/wvnet/tools;
+        index ip.php;
+        server_name ip.rtswv.com;
+
+        location / {
+		try_files $uri $uri/ /ip.php?q=$uri&$args =404;
+        }
+        location ~ \.php$ {
+                fastcgi_read_timeout 120;
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php7.0-fpm-mike.sock;
+                fastcgi_index ip.php;
+                include fastcgi_params;
+        }
 }
 
