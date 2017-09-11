@@ -30,7 +30,6 @@ server {
         server_name wvnet.work www.wvnet.work;
 
         location / {
-                # try_files $uri $uri/ =404;
                 try_files $uri $uri/ /index.php?q=$uri&$args;
 		#auth_basic "Mike's Friends Only";
                 #auth_basic_user_file /home/mike/sites/wvnet/htpasswd.users;
@@ -78,15 +77,16 @@ server {
 	expires $expires;
 	root /home/mike/sites/wvnet/tools;
 	index index.php index.html;
-	
-	server_name tools.wvnet.work www.tools.wvnet.work;
+	autoindex on;	
+	server_name tools.wvnet.work;
 
         location / {
-                # try_files $uri $uri/ =404;
-		autoindex on;
-                try_files $uri $uri/ /index.php?q=$uri&$args;
+                try_files $uri $uri/ @rewrite;
+                #try_files $uri $uri/ /index.php?q=$uri&$args;
         }
-
+	location @rewrite {
+		rewrite ^ $uri.php last;
+	}
         error_page 404 /404.html;
         access_log /home/mike/sites/wvnet/access.log combined if=$log_ip;
         error_log /home/mike/sites/wvnet/error.log;

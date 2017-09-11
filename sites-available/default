@@ -1,7 +1,7 @@
 server {
         listen 80 default_server;
         listen [::]:80 default_server;
-	      listen 443 ssl default_server;
+	listen 443 ssl default_server;
         listen [::]:443 ssl default_server;
         ssl_certificate /etc/letsencrypt/live/thor.rtswv.com/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/thor.rtswv.com/privkey.pem;
@@ -67,6 +67,14 @@ server {
                 include fastcgi_params;
         }
 
+}
+server {
+	server_name browser.rtswv.com;
+	listen 80;
+	location / {
+		include proxy_params;
+		proxy_pass http://asgard.rtswv.com:9876;
+	}
 }
 server {
 	server_name unifi.rtswv.com;
