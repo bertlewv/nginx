@@ -11,7 +11,7 @@ server {
         server_name cmm.me www.cmm.me;
         listen [::]:443 ssl;
         listen 443 ssl;
-	expires $expires;
+        expires $expires;
         ssl_certificate /etc/letsencrypt/live/cmm.me/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/cmm.me/privkey.pem;
         include ssl_params;
