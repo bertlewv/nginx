@@ -43,8 +43,14 @@ server {
 	location /camera {
 		autoindex on;
 	}
+	location /bg {
+		autoindex on;
+	}
 	location /nocmonitor2 {
 		autoindex on;
+	}
+	location ~/wiki/(data|conf|bin|inc)/ {
+		deny all;
 	}
         error_page 404 /404.html;
 	access_log /home/mike/sites/wvnet/access.log filtered if=$log_ip;
