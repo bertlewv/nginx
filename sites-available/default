@@ -69,6 +69,14 @@ server {
 
 }
 server {
+	server_name nocmonitor.rtswv.com;
+	listen 80;
+	location / {
+		include proxy_params;
+		proxy_pass http://asgard.rtswv.com:9876/webtools/nocmonitor/;
+	}
+}
+server {
 	server_name browser.rtswv.com;
 	listen 80;
 	location / {
