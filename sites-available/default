@@ -69,7 +69,7 @@ server {
 
 }
 server {
-	server_name nocmonitor.rtswv.com;
+	server_name nocmonitor.wvnet.work;
 	listen 80;
 	location / {
 		include proxy_params;
