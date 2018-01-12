@@ -111,3 +111,14 @@ server {
         }
 }
 
+upstream short {
+	server 129.71.2.40;
+}
+server {
+	server_name test.wvnet.work;
+	listen 80;
+	location / {
+		include proxy_params;
+		proxy_pass http://short;
+	}
+}
