@@ -113,6 +113,7 @@ server {
 
 upstream short {
 	server 129.71.2.40;
+	server 129.71.20.8;
 }
 server {
 	server_name test.wvnet.work;
@@ -122,3 +123,21 @@ server {
 		proxy_pass http://short;
 	}
 }
+server {
+        server_name nocmonitor.wvnet.work;
+        listen 80;
+        location / {
+                include proxy_params;
+                proxy_pass http://asgard.rtswv.com:9876/webtools/nocmonitor/;
+        }
+}
+
+server {
+        server_name nocmonitor.wvnet.work;
+        listen 80;
+        location / {
+                include proxy_params;
+                proxy_pass http://asgard.rtswv.com:9876/webtools/nocmonitor/;
+        }
+}
+
