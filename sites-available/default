@@ -70,26 +70,20 @@ server {
 }
 server {
         server_name wp.rtswv.com;
-        listen 80;
+	listen 80;
+	listen [::]:80;
         location / {
                 include proxy_params;
-                proxy_pass http://67.205.131.252:9876/;
+                proxy_pass http://localhost:9876;
         }
 }
 server {
 	server_name browser.rtswv.com;
 	listen 80;
+	listen [::]:80;
 	location / {
 		include proxy_params;
 		proxy_pass http://asgard.rtswv.com:9876;
-	}
-}
-server {
-	server_name unifi.rtswv.com;
-	listen 80;
-	location / {
-	  include proxy_params;
-		proxy_pass http://138.197.149.162:8080;
 	}
 }
 server {
