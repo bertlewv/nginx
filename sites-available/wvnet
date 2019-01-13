@@ -15,8 +15,8 @@ server {
 	return 302 https://$host$request_uri;
 }
 server {
-        listen 443 ssl;
-	listen [::]:443 ssl;
+        listen 443 ssl http2;
+	listen [::]:443 ssl http2;
 	expires $expires;
 	
 	#Certificate settings
