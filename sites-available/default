@@ -78,22 +78,13 @@ server {
 	}
 }
 server {
-        server_name wp.rtswv.com;
+        server_name mail.rtswv.com;
 	listen 80;
 	listen [::]:80;
         location / {
                 include proxy_params;
                 proxy_pass http://localhost:9876;
         }
-}
-server {
-	server_name browser.rtswv.com;
-	listen 80;
-	listen [::]:80;
-	location / {
-		include proxy_params;
-		proxy_pass http://asgard.rtswv.com:9876;
-	}
 }
 server {
         listen 80;
