@@ -1,29 +1,38 @@
 include cache_params;
-
+#HTTP
 server {
         listen 80;
         listen [::]:80;
-
-	expires $expires;
-
+        server_name westoversanta.com www.westoversanta.com;
+        return 302 https://$host$request_uri;
+}
+#HTTPS
+server {
+        server_name westoversanta.com www.westoversanta.com;
+        listen [::]:443 ssl;
+        listen 443 ssl;
+        expires $expires;
+        ssl_certificate /etc/letsencrypt/live/westoversanta.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/westoversanta.com/privkey.pem;
+        include ssl_params;
         root /home/westover/html;
         index index.php index.html index.htm;
 
-        server_name westoversanta.com www.westoversanta.com;
-
         location / {
-                # try_files $uri $uri/ =404;
+                autoindex on;
                 try_files $uri $uri/ /index.php?q=$uri&$args;
         }
 
         error_page 404 /404.html;
-	access_log /home/westover/access.log;
-	error_log /home/westover/error.log;
+        access_log /home/westover/access.log;
+        error_log /home/westover/error.log;
         error_page 500 502 503 504 /50x.html;
         location = /50x.html {
                 root /var/www/html;
         }
-
+              location = /404.html {
+          root /var/www/html;
+              }
         location ~ \.php$ {
                 try_files $uri =404;
                 fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -32,4 +41,3 @@ server {
                 include fastcgi_params;
         }
 }
-
